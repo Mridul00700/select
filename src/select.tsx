@@ -42,7 +42,8 @@ export const Select = ({ multiple, value, onChange, options }: SelectProps) => {
   };
 
   const isOptionSelected = (option: SelectOption) => {
-    return option === value;
+
+    return multiple ? value.includes(option) : option === value;
   };
 
   const highlightOnHover = (index: number) => {
