@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./select.module.css";
-type SelectOption = {
+export type SelectOption = {
   label: string;
   value: string | number;
 };
@@ -8,7 +8,7 @@ type SelectOption = {
 type MultipleSelectProps = {
   multiple: true;
   value: SelectOption[];
-  onChange: (value: SelectOption[] | undefined) => void;
+  onChange: (value: SelectOption[]) => void;
 };
 
 type SingleSelectProps = {
@@ -30,19 +30,19 @@ export const Select = ({ multiple, value, onChange, options }: SelectProps) => {
   };
 
   const selectOption = (option: SelectOption) => {
-    if( multiple) {
-      if(value.includes(option)){
-        onChange(value.filter(value => value.label === option.label))
-      }else {
-        onChange([...value, option])
+    if (multiple) {
+      if (value.includes(option)) {
+        onChange(value.filter((value) => value.label !== option.label));
+      } else {
+        onChange([...value, option]);
       }
+    } else {
+      if (option !== value) onChange(option);
     }
-    multiple ? onChange([]) : onChange(option);
     setIsOpen(false);
   };
 
   const isOptionSelected = (option: SelectOption) => {
-
     return multiple ? value.includes(option) : option === value;
   };
 
@@ -61,7 +61,20 @@ export const Select = ({ multiple, value, onChange, options }: SelectProps) => {
       tabIndex={0}
       className={styles.container}
     >
-      <span className={styles.value}>{value?.label}</span>
+      <span className={styles.value}>
+        {multiple
+          ? value.map((v) => (
+              <button
+                key={v.value}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  selectOption(v);
+                }}
+                className={styles["option-badge"]}
+              >{v.label}<span className={styles["remove-btn"]}>&times;</span></button>
+            ))
+          : value?.label}
+      </span>
       <button
         onClick={(e) => {
           e.stopPropagation();
