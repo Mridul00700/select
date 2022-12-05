@@ -71,8 +71,14 @@ export const Select = ({ multiple, value, onChange, options }: SelectProps) => {
             setIsOpen(true);
             break
           }
-          const newValue = higlightedIndex + (e.code === 'ArrowUp' ? -1 : 1 )
-          break    
+          const newValue = higlightedIndex + (e.code === 'ArrowUp' ? -1 : 1 );
+          if(newValue >=0 && newValue < options.length ){
+            setHighlightedIndex(newValue);
+          }
+          break  
+        case 'Escape':
+          setIsOpen(false)    
+          break
       }
 
     }
